@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "TestPlayerGameObject.h"
 
+#include <list>
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -30,7 +32,11 @@ int main(int argc, char *argv[])
 	//The frames per second cap timer
 	LTimer capTimer;
 
-	TestPlayerGameObject playerObject(SDL_Rect{ 100, 100, 10, 10 }, SDL_Color{255,0,0,255});
+	TestPlayerGameObject playerObject1(SDL_Rect{ 100, 100, 10, 10 }, SDL_Color{255,0,0,255});
+	TestPlayerGameObject playerObject2(SDL_Rect{ 100, 200, 20, 20 }, SDL_Color{ 0, 255, 0, 255 });
+
+	auto playerObjects = std::list <TestPlayerGameObject> {playerObject1, playerObject2};
+
 
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -71,11 +77,29 @@ int main(int argc, char *argv[])
 
 						if (buttonState & SDL_BUTTON_LMASK)
 						{
-							playerObject.SetSelect(playerObject.CheckBound(SDL_Rect{ x, y, 10, 10 }));
+							SDL_bool selected = SDL_FALSE;
+							for (auto &object : playerObjects)
+							{
+								if (selected)
+								{
+									object.SetSelect(false);
+									continue;
+								}
+
+								selected = object.CheckBound(SDL_Rect{ x, y, 10, 10 });
+								object.SetSelect(selected);
+								
+							}
 						}
-						else if (buttonState & SDL_BUTTON_RMASK && playerObject.IsSelected())
+						else if (buttonState & SDL_BUTTON_RMASK)
 						{
-							playerObject.Move(SDL_Point{ x, y });
+							for (auto &object : playerObjects)
+							{
+								if (object.IsSelected())
+								{
+									object.Move(SDL_Point{ x, y });
+								}
+							}
 						}
 
 					}
@@ -87,7 +111,10 @@ int main(int argc, char *argv[])
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 
-				playerObject.Draw(gRenderer);
+				for (const auto &object : playerObjects)
+				{
+					object.Draw(gRenderer);
+				}
 
 				//Update screen
 				SDL_RenderPresent(gRenderer);

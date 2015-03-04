@@ -15,9 +15,6 @@
     <ClInclude Include="TestPlayerGameObject.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>common</Filter>
-    </ClInclude>
     <ClInclude Include="LTimer.h">
       <Filter>common</Filter>
     </ClInclude>

@@ -17,7 +17,7 @@ public:
 		bound_box_.y = new_loc.y;
 	}
 
-	bool CheckBound(const SDL_Rect & check_rect)
+	SDL_bool CheckBound(const SDL_Rect & check_rect) const
 	{
 		return SDL_HasIntersection(&check_rect, &bound_box_);
 	}
@@ -27,7 +27,7 @@ public:
 		selected_ = selected;
 	}
 
-	bool IsSelected()
+	bool IsSelected() const
 	{
 		return selected_;
 	}
@@ -37,7 +37,7 @@ public:
 
 	}
 
-	void Draw(SDL_Renderer* renderer)
+	void Draw(SDL_Renderer* renderer) const
 	{
 		SDL_SetRenderDrawColor(renderer, display_color_.r, display_color_.g, display_color_.b, display_color_.a);
 		SDL_RenderFillRect(renderer, &bound_box_);
