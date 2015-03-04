@@ -2,19 +2,26 @@
 
 #include <SDL.h>
 
+#include <math.h>
+
 class TestPlayerGameObject
 {
 public:
-	TestPlayerGameObject(const SDL_Rect & init_rect, const SDL_Color &color)
+	TestPlayerGameObject(const SDL_Rect & init_rect, const SDL_Color &color,double velocity)
 	{
 		bound_box_ = init_rect;
 		display_color_ = color;
+		x = init_rect.x;
+		y = init_rect.y;
+		xTarget = x;
+		yTarget = y;
+		this->velocity = velocity;
 	}
 
 	void Move(const SDL_Point & new_loc)
 	{
-		bound_box_.x = new_loc.x;
-		bound_box_.y = new_loc.y;
+		xTarget = new_loc.x;
+		yTarget = new_loc.y;
 	}
 
 	SDL_bool CheckBound(const SDL_Rect & check_rect) const
@@ -22,19 +29,44 @@ public:
 		return SDL_HasIntersection(&check_rect, &bound_box_);
 	}
 
-	void SetSelect(bool selected)
+	void SetSelect(SDL_bool selected)
 	{
 		selected_ = selected;
 	}
 
-	bool IsSelected() const
+	SDL_bool IsSelected() const
 	{
 		return selected_;
 	}
 
 	void Update()
 	{
+		if (xTarget != x || yTarget != y)
+		{
+			double diffY = (yTarget-y);
+			double diffX = (xTarget-x);
 
+			double diffTotal = abs(diffY) + abs(diffX);
+
+			if (diffTotal < velocity)
+			{
+				x = xTarget;
+				y = yTarget;
+			}
+			else
+			{
+				double velX = velocity * diffX / diffTotal;
+				double velY = velocity * diffY / diffTotal;
+
+				x += velX;
+				y += velY;
+			}
+
+			
+
+			bound_box_.x = static_cast<int>(round(x));
+			bound_box_.y = static_cast<int>(round(y));
+		}
 	}
 
 	void Draw(SDL_Renderer* renderer) const
@@ -50,8 +82,13 @@ public:
 
 private:
 
+	double velocity;
+
 	SDL_Color display_color_;
 	SDL_Rect bound_box_;
+	
+	double x, y;
+	double xTarget, yTarget;
 
-	bool selected_ = false;
+	SDL_bool selected_ = SDL_FALSE;
 };

@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 	//The frames per second cap timer
 	LTimer capTimer;
 
-	TestPlayerGameObject playerObject1(SDL_Rect{ 100, 100, 10, 10 }, SDL_Color{255,0,0,255});
-	TestPlayerGameObject playerObject2(SDL_Rect{ 100, 200, 20, 20 }, SDL_Color{ 0, 255, 0, 255 });
+	TestPlayerGameObject playerObject1(SDL_Rect{ 100, 100, 10, 10 }, SDL_Color{255,0,0,255},2);
+	TestPlayerGameObject playerObject2(SDL_Rect{ 100, 200, 20, 20 }, SDL_Color{ 0, 255, 0, 255 },1);
 
 	auto playerObjects = std::list <TestPlayerGameObject> {playerObject1, playerObject2};
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 							{
 								if (selected)
 								{
-									object.SetSelect(false);
+									object.SetSelect(SDL_FALSE);
 									continue;
 								}
 
@@ -111,8 +111,9 @@ int main(int argc, char *argv[])
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 
-				for (const auto &object : playerObjects)
+				for (auto &object : playerObjects)
 				{
+					object.Update();
 					object.Draw(gRenderer);
 				}
 
